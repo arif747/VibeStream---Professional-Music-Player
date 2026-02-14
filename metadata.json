@@ -1,0 +1,7 @@
+{
+  "name": "VibeStream - Professional Music Player",
+  "description": "A world-class online music streaming platform with waveform visualization, smart library, and Gemini-powered music insights.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
