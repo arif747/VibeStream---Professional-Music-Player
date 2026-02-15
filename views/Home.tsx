@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Song, Playlist } from '../types';
 import { api } from '../services/api';
 import SongCard from '../components/SongCard';
-import { Disc3, Star, Clock, Loader2, ArrowLeft, Play, Sparkles } from 'lucide-react';
+import { Disc3, Star, Clock, Loader2, ArrowLeft, Play, Sparkles, Download, Check } from 'lucide-react';
 import { useAudio } from '../store';
 
 const Home: React.FC = () => {
@@ -12,6 +12,7 @@ const Home: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]);
+  const [downloadedSongs, setDownloadedSongs] = useState<Set<string>>(new Set());
   const { playSong } = useAudio();
 
   useEffect(() => {
@@ -38,6 +39,15 @@ const Home: React.FC = () => {
     setPlaylistSongs(data);
     setSelectedPlaylist(playlist);
     setIsLoading(false);
+  };
+
+  const handleDownloadTrack = (e: React.MouseEvent, songId: string) => {
+    e.stopPropagation();
+    setDownloadedSongs(prev => {
+      const next = new Set(prev);
+      next.add(songId);
+      return next;
+    });
   };
 
   const getGreeting = () => {
@@ -117,11 +127,19 @@ const Home: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <div className="flex items-center gap-1.5">
-                       <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-500/40 group-hover:bg-emerald-500 transition-colors" style={{width: `${(song.play_count / 6000) * 100}%`}}></div>
+                    <div className="flex items-center gap-4">
+                       <div className="flex items-center gap-1.5 flex-1">
+                          <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                             <div className="h-full bg-emerald-500/40 group-hover:bg-emerald-500 transition-colors" style={{width: `${(song.play_count / 160000) * 100}%`}}></div>
+                          </div>
+                          <span className="text-[10px] font-bold text-zinc-600">{song.play_count.toLocaleString()}</span>
                        </div>
-                       <span className="text-[10px] font-bold text-zinc-600">{song.play_count.toLocaleString()}</span>
+                       <button 
+                        onClick={(e) => handleDownloadTrack(e, song.id)}
+                        className={`p-2 rounded-full transition-all ${downloadedSongs.has(song.id) ? 'text-emerald-500 bg-emerald-500/10' : 'text-zinc-500 hover:text-white hover:bg-white/10'}`}
+                       >
+                          {downloadedSongs.has(song.id) ? <Check className="w-4 h-4" /> : <Download className="w-4 h-4" />}
+                       </button>
                     </div>
                   </td>
                   <td className="px-8 py-4 text-zinc-500 text-xs font-mono text-right">
@@ -205,12 +223,20 @@ const Home: React.FC = () => {
                   <div className="hidden md:flex flex-col items-end gap-1">
                      <span className="text-[10px] font-black text-emerald-500/60 uppercase tracking-tighter">{song.play_count.toLocaleString()} streams</span>
                      <div className="w-16 h-1 bg-white/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500/30" style={{width: '70%'}}></div>
+                        <div className="h-full bg-emerald-500/30" style={{width: `${(song.play_count / 160000) * 100}%`}}></div>
                      </div>
                   </div>
-                  <span className="text-xs text-zinc-600 font-mono w-12 text-right">
-                    {Math.floor(song.duration_seconds / 60)}:{(song.duration_seconds % 60).toString().padStart(2, '0')}
-                  </span>
+                  <div className="flex items-center gap-4">
+                     <button 
+                        onClick={(e) => handleDownloadTrack(e, song.id)}
+                        className={`p-2 rounded-full transition-all ${downloadedSongs.has(song.id) ? 'text-emerald-500 bg-emerald-500/10' : 'text-zinc-500 opacity-0 group-hover:opacity-100 hover:text-white hover:bg-white/10'}`}
+                     >
+                        {downloadedSongs.has(song.id) ? <Check className="w-4 h-4" /> : <Download className="w-4 h-4" />}
+                     </button>
+                     <span className="text-xs text-zinc-600 font-mono w-12 text-right">
+                        {Math.floor(song.duration_seconds / 60)}:{(song.duration_seconds % 60).toString().padStart(2, '0')}
+                     </span>
+                  </div>
                 </div>
               ))}
             </div>

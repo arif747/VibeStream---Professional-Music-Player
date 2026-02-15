@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Home, Search, Library, PlusSquare, Heart, Disc3, Settings, Crown } from 'lucide-react';
+import { Home, Search, Library, PlusSquare, Heart, Disc3, Settings, Crown, Download, Smartphone, Monitor } from 'lucide-react';
 
 interface SidebarProps {
   currentView: string;
@@ -14,6 +14,10 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
     { icon: Library, label: 'Library', id: 'library' },
   ];
 
+  const handleDownloadApp = (platform: string) => {
+    alert(`Downloading VibeStream for ${platform}... Check your downloads folder.`);
+  };
+
   return (
     <div className="hidden md:flex w-72 glass flex-col h-full border-r border-white/5 relative z-30">
       <div className="p-8 flex items-center gap-3">
@@ -23,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
         <h1 className="text-2xl font-black tracking-tighter text-white">VIBESTREAM</h1>
       </div>
 
-      <nav className="flex-1 px-4 space-y-1">
+      <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
         <div className="mb-6">
           <h3 className="px-4 text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Main Menu</h3>
           {navItems.map((item) => (
@@ -42,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
           ))}
         </div>
 
-        <div className="pt-4">
+        <div className="pt-4 mb-6">
           <h3 className="px-4 text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Your Library</h3>
           <button className="flex items-center gap-4 w-full px-4 py-3 text-zinc-400 hover:text-white transition group hover:bg-white/5 rounded-xl">
             <div className="w-5 h-5 bg-emerald-500/20 rounded flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
@@ -56,6 +60,31 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
             </div>
             <span className="font-semibold text-sm">Liked Songs</span>
           </button>
+        </div>
+
+        <div className="pt-4 px-2">
+           <div className="bg-emerald-500/5 rounded-2xl p-4 border border-emerald-500/10">
+              <div className="flex items-center gap-2 mb-3">
+                 <Download className="w-4 h-4 text-emerald-400" />
+                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Get Our App</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                 <button 
+                  onClick={() => handleDownloadApp('Windows')}
+                  className="flex flex-col items-center gap-1.5 p-2 bg-white/5 hover:bg-white/10 rounded-xl transition border border-white/5"
+                 >
+                    <Monitor className="w-4 h-4 text-zinc-400" />
+                    <span className="text-[9px] font-bold">Desktop</span>
+                 </button>
+                 <button 
+                  onClick={() => handleDownloadApp('Mobile')}
+                  className="flex flex-col items-center gap-1.5 p-2 bg-white/5 hover:bg-white/10 rounded-xl transition border border-white/5"
+                 >
+                    <Smartphone className="w-4 h-4 text-zinc-400" />
+                    <span className="text-[9px] font-bold">Mobile</span>
+                 </button>
+              </div>
+           </div>
         </div>
       </nav>
 
